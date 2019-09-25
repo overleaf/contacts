@@ -59,7 +59,7 @@ describe "Getting Contacts", ->
 				body.contact_ids.should.deep.equal [@contact_id_2, @contact_id_3, @contact_id_1]
 				done()
 		
-		it "should respect a limit and only return top X contacts", ->
+		it "should respect a limit and only return top X contacts", (done) ->
 			request {
 				method: "GET"
 				url: "#{HOST}/user/#{@user_id}/contacts?limit=2"
