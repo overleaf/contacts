@@ -4,12 +4,8 @@
 {
   "extends": [
     "standard",
-    "prettier",
-    "prettier/standard"
+    "plugin:prettier/recommended"
   ],
-  "parserOptions": {
-    "ecmaVersion": 2017
-  },
   "plugins": [
     "mocha",
     "chai-expect",
