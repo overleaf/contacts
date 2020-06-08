@@ -16,14 +16,11 @@ clean:
 	docker rmi ci/$(PROJECT_NAME):$(BRANCH_NAME)-$(BUILD_NUMBER)
 	docker rmi gcr.io/overleaf-ops/$(PROJECT_NAME):$(BRANCH_NAME)-$(BUILD_NUMBER)
 
-format:
-	$(DOCKER_COMPOSE) run --rm test_unit npm run format || true
-
-format_fix:
-	$(DOCKER_COMPOSE) run --rm test_unit npm run format:fix
-
 lint:
 	$(DOCKER_COMPOSE) run --rm test_unit npm run lint || true
+
+format_fix:
+	$(DOCKER_COMPOSE) run --rm test_unit npm run lint:fix
 
 test: format lint test_unit test_acceptance
 
