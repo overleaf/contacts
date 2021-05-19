@@ -1,3 +1,8 @@
+/* eslint-disable
+    camelcase,
+*/
+// TODO: This file was created by bulk-decaffeinate.
+// Fix any style issues and re-enable lint.
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
@@ -16,7 +21,7 @@ let projects = fs.readFileSync(process.argv[2]).toString();
 projects = projects.split("\n").filter(p => p!=="").map(p => JSON.parse(p));
 
 const contact_pairs = [];
-for (let project of Array.from(projects)) {
+for (const project of Array.from(projects)) {
 	project_id = project._id.$oid;
 	owner_id = project.owner_ref.$oid;
 	const contact_ids = project.collaberator_refs.concat(project.readOnly_refs).map(r => r.$oid);
@@ -29,12 +34,12 @@ for (let project of Array.from(projects)) {
 const DONE_FILE = process.argv[3];
 const done_list = fs.readFileSync(DONE_FILE).toString();
 const done_contacts = {};
-for (let done_pair of Array.from(done_list.split("\n"))) {
+for (const done_pair of Array.from(done_list.split("\n"))) {
 	done_contacts[done_pair] = true;
 }
 
 const workers = [];
-for (let contact_pair of Array.from(contact_pairs)) {
+for (const contact_pair of Array.from(contact_pairs)) {
 	((contact_pair => workers.push(function(cb) {
         if (done_contacts[contact_pair.join(":")]) {
             console.log("ALREADY DONE", contact_pair.join(":"), "SKIPPING");
