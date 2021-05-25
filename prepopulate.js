@@ -1,15 +1,4 @@
-/* eslint-disable
-    camelcase,
-*/
-// TODO: This file was created by bulk-decaffeinate.
-// Fix any style issues and re-enable lint.
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
- */
+/* eslint-disable camelcase */
 // Usage: coffee preprocess.coffee projects.json done.csv
 // where projects.json is the output of
 // mongoexport <CREDENTIALS> --db sharelatex-staging --collection projects --type=json --fields owner_ref,collaberator_refs,readOnly_refs --query '{ $or: [{collaberator_refs: { $not : {$size: 0} }}, {readOnly_refs: { $not: {$size: 0}}}]}'
@@ -24,13 +13,13 @@ projects = projects
   .map((p) => JSON.parse(p))
 
 const contact_pairs = []
-for (const project of Array.from(projects)) {
+for (const project of projects) {
   project_id = project._id.$oid
   owner_id = project.owner_ref.$oid
   const contact_ids = project.collaberator_refs
     .concat(project.readOnly_refs)
     .map((r) => r.$oid)
-  for (contact_id of Array.from(contact_ids)) {
+  for (contact_id of contact_ids) {
     contact_pairs.push([project_id, owner_id, contact_id])
   }
 }
@@ -39,19 +28,19 @@ for (const project of Array.from(projects)) {
 const DONE_FILE = process.argv[3]
 const done_list = fs.readFileSync(DONE_FILE).toString()
 const done_contacts = {}
-for (const done_pair of Array.from(done_list.split('\n'))) {
+for (const done_pair of done_list.split('\n')) {
   done_contacts[done_pair] = true
 }
 
 const workers = []
-for (const contact_pair of Array.from(contact_pairs)) {
+for (const contact_pair of contact_pairs) {
   ;((contact_pair) =>
     workers.push(function (cb) {
       if (done_contacts[contact_pair.join(':')]) {
         console.log('ALREADY DONE', contact_pair.join(':'), 'SKIPPING')
         return cb()
       } else {
-        ;[project_id, owner_id, contact_id] = Array.from(contact_pair)
+        ;[project_id, owner_id, contact_id] = contact_pair
         console.log(
           `PINGING CONTACT API (OWNER: ${owner_id}, CONTACT: ${contact_id})...`
         )
@@ -61,7 +50,7 @@ for (const contact_pair of Array.from(contact_pairs)) {
             json: { contact_id }
           },
           function (error, response, body) {
-            if (error != null) {
+            if (error) {
               return cb(error)
             }
             if (response.statusCode !== 204) {
@@ -72,7 +61,7 @@ for (const contact_pair of Array.from(contact_pairs)) {
               DONE_FILE,
               contact_pair.join(':') + '\n',
               function (error) {
-                if (error != null) {
+                if (error) {
                   return cb(error)
                 }
                 console.log('WRITTEN')
@@ -86,7 +75,7 @@ for (const contact_pair of Array.from(contact_pairs)) {
 }
 
 require('async').series(workers, function (error) {
-  if (error != null) {
+  if (error) {
     console.error(error)
   }
   return console.log('DONE')
